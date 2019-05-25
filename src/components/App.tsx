@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Tile from "./Tile";
 
 const App = () => {
