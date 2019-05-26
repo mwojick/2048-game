@@ -55,6 +55,7 @@ export const Content = styled.div`
 
 export const Number = styled.div`
   font-size: 26px;
+  font-weight: bold;
   width: auto;
   height: auto;
 

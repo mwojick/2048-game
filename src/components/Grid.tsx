@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { SGrid, colors } from "./styles";
+import Hammer from "hammerjs";
 
 import Tile from "./Tile";
 
@@ -9,6 +10,7 @@ function getRandomInt(max) {
 }
 
 const Grid = props => {
+  const gridRef = useRef(null);
   const [numbers, setNumbers] = useState(
     Array(4)
       .fill(0)
@@ -25,10 +27,33 @@ const Grid = props => {
     newNumbers[randIndexY2][randIndexX2] = 2;
     setNumbers(newNumbers);
     console.log(newNumbers);
+
+    let grid = gridRef.current;
+    let hammer = new Hammer(grid);
+    console.log(hammer);
+
+    hammer.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
+
+    hammer.on("swipedown", function(e) {
+      console.log("down");
+      console.log(e);
+    });
+    hammer.on("swipeup", function(e) {
+      console.log("up");
+      console.log(e);
+    });
+    hammer.on("swiperight", function(e) {
+      console.log("right");
+      console.log(e);
+    });
+    hammer.on("swipeleft", function(e) {
+      console.log("left");
+      console.log(e);
+    });
   }, []);
 
   return (
-    <SGrid>
+    <SGrid ref={gridRef}>
       {numbers.flat().map((a, i) => {
         let num = a === 0 ? "" : a;
         let styles = colors[4096];
