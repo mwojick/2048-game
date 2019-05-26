@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import Tile from "./Tile";
+import { Main } from "./styles";
+
+import Grid from "./Grid";
 
 const App = () => {
   return (
-    <div>
-      Hello
-      <Tile />
-    </div>
+    <Main>
+      2048
+      <Grid />
+    </Main>
   );
 };
 

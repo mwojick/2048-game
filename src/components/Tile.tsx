@@ -1,8 +1,14 @@
 import React from "react";
-import { Box } from "./styles";
+import { STile, Content, Number } from "./styles";
 
-const Tile = () => {
-  return <Box> fdasfdsa</Box>;
+const Tile = ({ num, styles }) => {
+  return (
+    <STile styles={styles}>
+      <Content>
+        <Number>{num}</Number>
+      </Content>
+    </STile>
+  );
 };
 
 export default Tile;
