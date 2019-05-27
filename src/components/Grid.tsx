@@ -9,6 +9,23 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
+const handleMoved = newNumbers => {
+  // assign random zero spot to 2
+  let flat = newNumbers.flat();
+  let zeroIndexes = [];
+  flat.forEach((el, ind) => {
+    if (el === 0) {
+      zeroIndexes.push(ind);
+    }
+  });
+  if (zeroIndexes.length !== 0) {
+    let index = zeroIndexes[Math.floor(Math.random() * zeroIndexes.length)];
+    let x = index % 4;
+    let y = (index - x) / 4;
+    newNumbers[y][x] = 2;
+  }
+};
+
 const Grid = props => {
   const gridRef = useRef(null);
   const [numbers, setNumbers] = useState(
@@ -30,11 +47,44 @@ const Grid = props => {
 
     let grid = gridRef.current;
     let hammer = new Hammer(grid);
-    console.log(hammer);
 
     hammer.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
 
     hammer.on("swipedown", function(e) {
+      let moved = false;
+      let newNumbers = Object.assign([], numbers);
+      for (let i = numbers.length - 2; i >= 0; i--) {
+        for (let j = 0; j < numbers[i].length; j++) {
+          if (numbers[i][j] !== 0) {
+            let moveTo = i + 1;
+            while (moveTo < numbers.length - 1 && numbers[moveTo][j] === 0) {
+              moveTo++;
+            }
+            console.log(moveTo);
+
+            let num = numbers[i][j];
+            if (num === numbers[moveTo][j]) {
+              moved = true;
+              newNumbers[moveTo][j] *= 2;
+              newNumbers[i][j] = 0;
+            } else if (numbers[moveTo][j] === 0) {
+              moved = true;
+              newNumbers[moveTo][j] = num;
+              newNumbers[i][j] = 0;
+            } else if (numbers[moveTo - 1][j] === 0) {
+              moved = true;
+              newNumbers[moveTo - 1][j] = num;
+              newNumbers[i][j] = 0;
+            }
+          }
+        }
+      }
+
+      if (moved) {
+        handleMoved(newNumbers);
+      }
+
+      setNumbers(newNumbers);
       console.log("down");
       console.log(e);
     });
