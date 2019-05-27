@@ -43,7 +43,6 @@ const Grid = props => {
     newNumbers[randIndexY][randIndexX] = 2;
     newNumbers[randIndexY2][randIndexX2] = 2;
     setNumbers(newNumbers);
-    console.log(newNumbers);
 
     let grid = gridRef.current;
     let hammer = new Hammer(grid);
@@ -60,7 +59,6 @@ const Grid = props => {
             while (moveTo < numbers.length - 1 && numbers[moveTo][j] === 0) {
               moveTo++;
             }
-            console.log(moveTo);
 
             let num = numbers[i][j];
             if (num === numbers[moveTo][j]) {
@@ -82,23 +80,120 @@ const Grid = props => {
 
       if (moved) {
         handleMoved(newNumbers);
+        setNumbers(newNumbers);
+      }
+    });
+
+    hammer.on("swipeup", function(e) {
+      let moved = false;
+      let newNumbers = Object.assign([], numbers);
+      for (let i = 1; i < numbers.length; i++) {
+        for (let j = 0; j < numbers[i].length; j++) {
+          if (numbers[i][j] !== 0) {
+            let moveTo = i - 1;
+            while (moveTo > 0 && numbers[moveTo][j] === 0) {
+              moveTo--;
+            }
+
+            let num = numbers[i][j];
+            if (num === numbers[moveTo][j]) {
+              moved = true;
+              newNumbers[moveTo][j] *= 2;
+              newNumbers[i][j] = 0;
+            } else if (numbers[moveTo][j] === 0) {
+              moved = true;
+              newNumbers[moveTo][j] = num;
+              newNumbers[i][j] = 0;
+            } else if (numbers[moveTo + 1][j] === 0) {
+              moved = true;
+              newNumbers[moveTo + 1][j] = num;
+              newNumbers[i][j] = 0;
+            }
+          }
+        }
       }
 
-      setNumbers(newNumbers);
-      console.log("down");
-      console.log(e);
+      if (moved) {
+        handleMoved(newNumbers);
+        setNumbers(newNumbers);
+      }
     });
-    hammer.on("swipeup", function(e) {
-      console.log("up");
-      console.log(e);
-    });
+
     hammer.on("swiperight", function(e) {
-      console.log("right");
-      console.log(e);
+      let moved = false;
+      let newNumbers = Object.assign([], numbers);
+      console.log("nums: ", newNumbers);
+
+      for (let i = 0; i < numbers.length; i++) {
+        for (let j = numbers[i].length - 2; j >= 0; j--) {
+          if (numbers[i][j] !== 0) {
+            let moveTo = j + 1;
+            while (moveTo < numbers[i].length - 1 && numbers[i][moveTo] === 0) {
+              moveTo++;
+            }
+
+            let num = numbers[i][j];
+            if (num === numbers[i][moveTo]) {
+              moved = true;
+              newNumbers[i][moveTo] *= 2;
+              newNumbers[i][j] = 0;
+            } else if (numbers[i][moveTo] === 0) {
+              moved = true;
+              newNumbers[j][moveTo] = num;
+              newNumbers[i][j] = 0;
+            } else if (numbers[i][moveTo - 1] === 0) {
+              moved = true;
+              newNumbers[i][moveTo - 1] = num;
+              newNumbers[i][j] = 0;
+            }
+          }
+        }
+      }
+
+      if (moved) {
+        handleMoved(newNumbers);
+        setNumbers(newNumbers);
+      }
+
+      console.log("new nums: ", newNumbers);
     });
+
     hammer.on("swipeleft", function(e) {
-      console.log("left");
-      console.log(e);
+      let moved = false;
+      let newNumbers = Object.assign([], numbers);
+      console.log("nums: ", newNumbers[3][0]);
+
+      for (let i = 0; i < numbers.length; i++) {
+        for (let j = 1; j < numbers[i].length; j++) {
+          if (numbers[i][j] !== 0) {
+            let moveTo = j - 1;
+            while (moveTo > 0 && numbers[i][moveTo] === 0) {
+              moveTo--;
+            }
+
+            let num = numbers[i][j];
+            if (num === numbers[i][moveTo]) {
+              moved = true;
+              newNumbers[i][moveTo] *= 2;
+              newNumbers[i][j] = 0;
+            } else if (numbers[i][moveTo] === 0) {
+              moved = true;
+              newNumbers[j][moveTo] = num;
+              newNumbers[i][j] = 0;
+            } else if (numbers[i][moveTo + 1] === 0) {
+              moved = true;
+              newNumbers[i][moveTo + 1] = num;
+              newNumbers[i][j] = 0;
+            }
+          }
+        }
+      }
+
+      if (moved) {
+        handleMoved(newNumbers);
+        setNumbers(newNumbers);
+      }
+      console.log("new nums: ", newNumbers);
     });
   }, []);
 
