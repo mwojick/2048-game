@@ -127,9 +127,7 @@ const Grid = props => {
     if (moved) {
       handleMoved(newNumbers);
       setNumbers(newNumbers);
-      console.log(props.score);
-
-      props.setScore(props.score + newScore);
+      props.setScore(newScore);
     }
   }, []);
 
