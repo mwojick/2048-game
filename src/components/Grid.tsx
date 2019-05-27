@@ -34,6 +34,105 @@ const Grid = props => {
       .map(a => new Array(4).fill(0))
   );
 
+  const handleSwipe = useCallback(direction => {
+    let moved = false;
+    let newNumbers = Object.assign([], numbers);
+    let newScore = 0;
+
+    // get values we need
+    for (let i = 0; i < numbers.length; i++) {
+      let arr = [];
+      for (let j = 0; j < numbers.length; j++) {
+        if (direction === "down" || direction === "up") {
+          arr.push(numbers[j][i]);
+        } else {
+          arr.push(numbers[i][j]);
+        }
+      }
+
+      // check if it will move based on zeroes
+      let sawNonZero = false;
+      if (direction === "down" || direction === "right") {
+        for (let k = 0; k < arr.length; k++) {
+          if (!sawNonZero && arr[k] !== 0) {
+            sawNonZero = true;
+          } else if (arr[k] === 0 && sawNonZero) {
+            moved = true;
+          }
+        }
+      } else {
+        for (let k = arr.length - 1; k >= 0; k--) {
+          if (!sawNonZero && arr[k] !== 0) {
+            sawNonZero = true;
+          } else if (arr[k] === 0 && sawNonZero) {
+            moved = true;
+          }
+        }
+      }
+
+      // filter and collapse array
+      let newArr = arr.filter(el => el !== 0);
+
+      if (newArr.length > 1) {
+        let collapsible = true;
+        while (collapsible) {
+          collapsible = false;
+
+          if (direction === "down" || direction === "right") {
+            for (let k = newArr.length - 1; k > 0; k--) {
+              if (newArr[k] === newArr[k - 1]) {
+                let temp = newArr[k] * 2;
+                newScore += temp;
+                newArr.splice(k - 1, 2, temp);
+                moved = true;
+                collapsible = true;
+                break;
+              }
+            }
+          } else {
+            for (let k = 0; k < newArr.length - 1; k++) {
+              if (newArr[k] === newArr[k + 1]) {
+                let temp = newArr[k] * 2;
+                newScore += temp;
+                newArr.splice(k, 2, temp);
+                moved = true;
+                collapsible = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // pad front with 0s
+      while (newArr.length !== numbers.length) {
+        if (direction === "down" || direction === "right") {
+          newArr.unshift(0);
+        } else {
+          newArr.push(0);
+        }
+      }
+
+      if (direction === "down" || direction === "up") {
+        for (let k = 0; k < newArr.length; k++) {
+          newNumbers[k][i] = newArr[k];
+        }
+      } else {
+        for (let k = 0; k < newArr.length; k++) {
+          newNumbers[i][k] = newArr[k];
+        }
+      }
+    }
+
+    if (moved) {
+      handleMoved(newNumbers);
+      setNumbers(newNumbers);
+      console.log(props.score);
+
+      props.setScore(props.score + newScore);
+    }
+  }, []);
+
   useEffect(() => {
     let randIndexX = getRandomInt(4);
     let randIndexY = getRandomInt(4);
@@ -50,223 +149,19 @@ const Grid = props => {
     hammer.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
 
     hammer.on("swipedown", function(e) {
-      let moved = false;
-      let newNumbers = Object.assign([], numbers);
-
-      // get values we need
-      for (let i = 0; i < numbers.length; i++) {
-        let arr = [];
-        for (let j = 0; j < numbers.length; j++) {
-          arr.push(numbers[j][i]);
-        }
-
-        // check if it will move based on zeroes
-        let sawNonZero = false;
-        for (let k = 0; k < arr.length; k++) {
-          if (!sawNonZero && arr[k] !== 0) {
-            sawNonZero = true;
-          } else if (arr[k] === 0 && sawNonZero) {
-            moved = true;
-          }
-        }
-
-        // filter and collapse array
-        let newArr = arr.filter(el => el !== 0);
-
-        if (newArr.length > 1) {
-          let collapsible = true;
-          while (collapsible) {
-            collapsible = false;
-            for (let k = newArr.length - 1; k > 0; k--) {
-              if (newArr[k] === newArr[k - 1]) {
-                let temp = newArr[k] * 2;
-                newArr.splice(k - 1, 2, temp);
-                moved = true;
-                collapsible = true;
-              }
-            }
-          }
-        }
-
-        // pad front with 0s
-        while (newArr.length !== numbers.length) {
-          newArr.unshift(0);
-        }
-
-        for (let k = 0; k < newArr.length; k++) {
-          newNumbers[k][i] = newArr[k];
-        }
-      }
-
-      if (moved) {
-        handleMoved(newNumbers);
-        setNumbers(newNumbers);
-      }
+      handleSwipe("down");
     });
 
     hammer.on("swipeup", function(e) {
-      let moved = false;
-      let newNumbers = Object.assign([], numbers);
-
-      // get values we need
-      for (let i = 0; i < numbers.length; i++) {
-        let arr = [];
-        for (let j = 0; j < numbers.length; j++) {
-          arr.push(numbers[j][i]);
-        }
-
-        // check if it will move based on zeroes
-        let sawNonZero = false;
-        for (let k = arr.length - 1; k >= 0; k--) {
-          if (!sawNonZero && arr[k] !== 0) {
-            sawNonZero = true;
-          } else if (arr[k] === 0 && sawNonZero) {
-            moved = true;
-          }
-        }
-
-        // filter and collapse array
-        let newArr = arr.filter(el => el !== 0);
-
-        if (newArr.length > 1) {
-          let collapsible = true;
-          while (collapsible) {
-            collapsible = false;
-            for (let k = 0; k < newArr.length - 1; k++) {
-              if (newArr[k] === newArr[k + 1]) {
-                let temp = newArr[k] * 2;
-                newArr.splice(k, 2, temp);
-                moved = true;
-                collapsible = true;
-              }
-            }
-          }
-        }
-
-        // pad front with 0s
-        while (newArr.length !== numbers.length) {
-          newArr.push(0);
-        }
-
-        for (let k = 0; k < newArr.length; k++) {
-          newNumbers[k][i] = newArr[k];
-        }
-      }
-
-      if (moved) {
-        handleMoved(newNumbers);
-        setNumbers(newNumbers);
-      }
+      handleSwipe("up");
     });
 
     hammer.on("swiperight", function(e) {
-      let moved = false;
-      let newNumbers = Object.assign([], numbers);
-
-      // get values we need
-      for (let i = 0; i < numbers.length; i++) {
-        let arr = [];
-        for (let j = 0; j < numbers.length; j++) {
-          arr.push(numbers[i][j]);
-        }
-
-        // check if it will move based on zeroes
-        let sawNonZero = false;
-        for (let k = 0; k < arr.length; k++) {
-          if (!sawNonZero && arr[k] !== 0) {
-            sawNonZero = true;
-          } else if (arr[k] === 0 && sawNonZero) {
-            moved = true;
-          }
-        }
-
-        // filter and collapse array
-        let newArr = arr.filter(el => el !== 0);
-
-        if (newArr.length > 1) {
-          let collapsible = true;
-          while (collapsible) {
-            collapsible = false;
-            for (let k = newArr.length - 1; k > 0; k--) {
-              if (newArr[k] === newArr[k - 1]) {
-                let temp = newArr[k] * 2;
-                newArr.splice(k - 1, 2, temp);
-                moved = true;
-                collapsible = true;
-              }
-            }
-          }
-        }
-
-        // pad front with 0s
-        while (newArr.length !== numbers.length) {
-          newArr.unshift(0);
-        }
-
-        for (let k = 0; k < newArr.length; k++) {
-          newNumbers[i][k] = newArr[k];
-        }
-      }
-
-      if (moved) {
-        handleMoved(newNumbers);
-        setNumbers(newNumbers);
-      }
+      handleSwipe("right");
     });
 
     hammer.on("swipeleft", function(e) {
-      let moved = false;
-      let newNumbers = Object.assign([], numbers);
-
-      // get values we need
-      for (let i = 0; i < numbers.length; i++) {
-        let arr = [];
-        for (let j = 0; j < numbers.length; j++) {
-          arr.push(numbers[i][j]);
-        }
-
-        // check if it will move based on zeroes
-        let sawNonZero = false;
-        for (let k = arr.length - 1; k >= 0; k--) {
-          if (!sawNonZero && arr[k] !== 0) {
-            sawNonZero = true;
-          } else if (arr[k] === 0 && sawNonZero) {
-            moved = true;
-          }
-        }
-
-        // filter and collapse array
-        let newArr = arr.filter(el => el !== 0);
-
-        if (newArr.length > 1) {
-          let collapsible = true;
-          while (collapsible) {
-            collapsible = false;
-            for (let k = 0; k < newArr.length - 1; k++) {
-              if (newArr[k] === newArr[k + 1]) {
-                let temp = newArr[k] * 2;
-                newArr.splice(k, 2, temp);
-                moved = true;
-                collapsible = true;
-              }
-            }
-          }
-        }
-
-        // pad front with 0s
-        while (newArr.length !== numbers.length) {
-          newArr.push(0);
-        }
-
-        for (let k = 0; k < newArr.length; k++) {
-          newNumbers[i][k] = newArr[k];
-        }
-      }
-
-      if (moved) {
-        handleMoved(newNumbers);
-        setNumbers(newNumbers);
-      }
+      handleSwipe("left");
     });
   }, []);
 

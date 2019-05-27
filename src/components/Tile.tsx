@@ -3,8 +3,8 @@ import { STile, Content, Number } from "./styles";
 
 const Tile = ({ num, styles }) => {
   return (
-    <STile styles={styles}>
-      <Content>
+    <STile>
+      <Content styles={styles}>
         <Number>{num}</Number>
       </Content>
     </STile>

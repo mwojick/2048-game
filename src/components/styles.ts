@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { keyframes } from "@emotion/core";
 
 let margin = 10;
 
@@ -32,9 +33,7 @@ export const SGrid = styled.div`
 export const STile = styled.div`
   position: relative;
   border-radius: 5px;
-  color: ${props => props.styles.color};
-  background-color: ${props => props.styles.background};
-
+  background: rgb(204 192 179);
   &:before {
     content: "";
     display: block;
@@ -43,6 +42,8 @@ export const STile = styled.div`
 `;
 
 export const Content = styled.div`
+  color: ${props => props.styles.color};
+  background-color: ${props => props.styles.background};
   height: 100%;
   width: 100%;
   position: absolute;
@@ -51,6 +52,15 @@ export const Content = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 50px;
+  z-index: 10;
+  /* -ms-transform: translate(50px, 0px);  */
+  /* -webkit-transform: translate(50px, 0px); */
+
+  /* &:hover {
+    transition: 0.2s ease-in;
+    transform: translate(calc(100% * 4 - 10px * 4), 0px);
+  } */
 `;
 
 export const Number = styled.div`
@@ -67,7 +77,7 @@ export const Number = styled.div`
 export const colors = {
   0: {
     color: "rgb(119	110	101)",
-    background: "rgb(204	192	179	)"
+    background: "rgba(204	192	179,0	)"
   },
   2: {
     color: "rgb(119	110	101)",

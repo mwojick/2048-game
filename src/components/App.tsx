@@ -4,10 +4,13 @@ import { Main } from "./styles";
 import Grid from "./Grid";
 
 const App = () => {
+  const [score, setScore] = useState(0);
+
   return (
     <Main>
-      2048
-      <Grid />
+      <div>2048</div>
+      <div>Score: {score}</div>
+      <Grid score={score} setScore={setScore} />
     </Main>
   );
 };
