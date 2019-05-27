@@ -4,7 +4,6 @@ import Hammer from "hammerjs";
 
 import Tile from "./Tile";
 
-let arr = [0, 0, 2, 8, 64, 32, 0, 2, 16, 128, 256, 512, 1024, 2048, 4096, 8192];
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
