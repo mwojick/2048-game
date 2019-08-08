@@ -1,3 +1,4 @@
+import { hot } from "react-hot-loader";
 import React, { useReducer } from "react";
 import { Main } from "./styles";
 
@@ -24,4 +25,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default hot(module)(App);

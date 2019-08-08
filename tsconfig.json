@@ -6,6 +6,6 @@
     "strict": false,
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
-    "types": ["@emotion/core", "@emotion/styled"]
+    "types": ["@emotion/core", "@emotion/styled", "node"]
   }
 }
